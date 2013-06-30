@@ -1,7 +1,9 @@
 
 .text
 .globl _main
+.globl main
 
+main:
 _main:
     push %rbp
     mov %rsp, %rbp
