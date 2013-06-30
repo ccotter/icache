@@ -22,6 +22,11 @@ get_rip:
 get_pic_size:
     push %rbp
     mov %rsp, %rbp
+    nop
+    nop
+    nop
+    nop
+    nop
 
     leaq flush_queue(%rip), %r14
     leaq nop_field(%rip), %r15
@@ -29,6 +34,11 @@ get_pic_size:
     xorq %rcx, %rcx
     xorq %rax, %rax
     mov %cs, %rdx
+
+    pushq %rdx
+    pushq %r15
+    lretq
+
 around:
     cmpl $1, %eax
     je found_size

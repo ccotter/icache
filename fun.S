@@ -3,13 +3,9 @@
 .globl _fun
 .globl _fun_ins
 .globl _fun_end
-.globl _fun2_ins
-.globl _fun2_end
 .globl fun
 .globl fun_ins
 .globl fun_end
-.globl fun2_ins
-.globl fun2_end
 
 /* fun(uint64_t*, uint64_t)
    Attempts to observe non-deterministic behavior due to
@@ -27,44 +23,34 @@ fun:
 _fun:
     push %rbp
     mov %rsp, %rbp
-    clflush (%rdi) # Remove the instruction from all caches
-    mov $10000, %r9
-    mov $1, %r8
-    jmp fun_ins
-before:
-    mov $1, %r9
-    xor %r8, %r8 # So we exit all oops
-    mov %rsi, (%rdi)
+    # A far jump simulated with a far return
+    xorq %rax, %rax
+    xorq %r15, %r15
+    mov %cs, %r15
+    pushq %r15
+    leaq copy(%rip), %r15
+    pushq %r15
+    lretq
+copy:
+    movw $0xc0ff, (%rdi) # This overwrites the following instruction
+                     # rdi maps to the same physical address, but
+                     # its linear address is different from the linear
+                     # address of the instruction at fun_ins.
+                     # So, the linear addresses fun_ins != %rdi, but
+                     # linear->physical translation will have fun_ins == %rdi
 fun_ins:
 _fun_ins:
-    mov $1, %eax
-    sub $1, %r9
-    jne _fun_ins
-    cmp $1, %r8
-    je before
-    leave
+    nop   # Two NOPs gives enough space for the inc %eax
+    nop
+    pop %rbp
     ret
 fun_end:
 _fun_end:
-
-/* Identical to the above - with the noted exception below.
-   This way, I can easily/safely copy code from fun2_ins
-   to fun_ins
-
-*/
-before2:
-    mov $1, %r9
-    xor %r8, %r8 # So we exit all oops
-    mov %rsi, (%rdi)
-fun2_ins:
-_fun2_ins:
-    mov $2, %eax # %eax = 2, not 1
-    sub $1, %r9 
-    jne fun2_ins
-    cmp $1, %r8
-    je before2
-    leave
-    ret
-fun2_end:
-_fun2_end:
-    ret
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
