@@ -29,6 +29,7 @@ int main(void)
             MAP_FILE | MAP_SHARED, fd, 0);
     assert((void*)-1 != a1);
     assert((void*)-1 != a2);
+    assert(a1!=a2);
 
     long sz = DIFF(fun, fun_end);
     memcpy(a1, fun, sz);
