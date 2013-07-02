@@ -9,7 +9,7 @@
 
 #define DIFF(a,b) ((long)(b) - (long)(a))
 
-#define SYM(name) extern int name(void);
+#define SYM(name) extern int name(void*);
 SYM(fun)
 SYM(fun_ins)
 SYM(fun_end)
@@ -36,7 +36,13 @@ int main(void)
 
     void *p1 = &a2[DIFF(fun, fun_ins)];
     typedef int (*fn_t)(void*);
-    printf("ret=%d\n", ((fn_t)a1)(p1));
+    //fun(p1);
+    int i;
+    for (i = 0; i < 100; ++i)
+    {
+        int j = ((fn_t)a1)(p1);
+        printf("ret=%d\n", j);
+    }
     close(fd);
     return 0;
 }

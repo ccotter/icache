@@ -23,16 +23,17 @@ fun:
 _fun:
     pushl %ebp
     movl %esp, %ebp
+    movl 8(%ebp), %ecx
     # A far jump simulated with a far return
     xorl %eax, %eax
-    xorl %esi, %esi
-    mov %cs, %esi
-    pushl %esi
-    mov $copy, %esi
-    pushl %esi
+    xorl %edx, %edx
+    mov %cs, %edx
+    pushl %edx
+    lea copy, %edx
+    pushl %edx
     lretl
 copy:
-    movw $0xc0ff, (%edi) # This overwrites the following instruction
+    movw $0xc0ff, (%ecx) # This overwrites the following instruction
                      # rdi maps to the same physical address, but
                      # its linear address is different from the linear
                      # address of the instruction at fun_ins.
