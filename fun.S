@@ -21,18 +21,18 @@
 # fun(rdi = uint64_t*, rsi = uint64_t)
 fun:
 _fun:
-    push %rbp
-    mov %rsp, %rbp
+    pushl %ebp
+    movl %esp, %ebp
     # A far jump simulated with a far return
-    xorq %rax, %rax
-    xorq %r15, %r15
-    mov %cs, %r15
-    pushq %r15
-    leaq copy(%rip), %r15
-    pushq %r15
-    lretq
+    xorl %eax, %eax
+    xorl %esi, %esi
+    mov %cs, %esi
+    pushl %esi
+    mov $copy, %esi
+    pushl %esi
+    lretl
 copy:
-    movw $0xc0ff, (%rdi) # This overwrites the following instruction
+    movw $0xc0ff, (%edi) # This overwrites the following instruction
                      # rdi maps to the same physical address, but
                      # its linear address is different from the linear
                      # address of the instruction at fun_ins.
@@ -42,7 +42,7 @@ fun_ins:
 _fun_ins:
     nop   # Two NOPs gives enough space for the inc %eax
     nop
-    pop %rbp
+    popl %ebp
     ret
 fun_end:
 _fun_end:
