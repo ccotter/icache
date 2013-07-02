@@ -29,8 +29,9 @@ _fun:
     xorl %edx, %edx
     mov %cs, %edx
     pushl %edx
-    lea copy, %edx
-    pushl %edx
+    call get_eip
+get_eip:
+    add $8, (%esp)
     lretl
 copy:
     movw $0xc0ff, (%ecx) # This overwrites the following instruction

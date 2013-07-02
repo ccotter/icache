@@ -6,8 +6,8 @@ pic: pic.S unprot.c
 	gcc pic.S unprot.c -O3 -o pic
 
 map: fun.S map.c
-	gcc map.c -O3 -m32 -Wl,-no_pie -S
-	gcc fun.S map.c -O3 -o map -m32 -Wl,-no_pie
+	gcc -g map.c -m32 -S
+	gcc map.s fun.S -o map -m32
 
 clean:
 	rm -rf map
